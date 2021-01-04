@@ -1,12 +1,13 @@
 export function paginateResults({
-  after: cursor,
+  after,
   pageSize = 20,
   results,
   // can pass in a function to calculate an item's cursor
-  getCursor = () => null,
+  getCursor = (any) => null,
 }) {
   if (pageSize < 1) return [];
 
+  const cursor = after;
   if (!cursor) return results.slice(0, pageSize);
   const cursorIndex = results.findIndex(item => {
     // if an item has a `cursor` on it, use that, otherwise try to generate one

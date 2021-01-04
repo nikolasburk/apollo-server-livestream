@@ -54,7 +54,7 @@ export class UserAPI extends DataSource {
     const userId = this.context.user.id;
   }
 
-  async getLaunchIdsByUser(): number[] {
+  async getLaunchIdsByUser(): Promise<number[]> {
     const userId = this.context.user.id;
     return [];
   }

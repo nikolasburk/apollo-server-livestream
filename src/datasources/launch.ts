@@ -11,6 +11,9 @@ interface LaunchRaw {
 }
 
 export class LaunchAPI extends RESTDataSource {
+
+  baseURL: string;
+
   constructor() {
     super();
     this.baseURL = 'https://api.spacexdata.com/v2/';
