@@ -1,8 +1,9 @@
 import { DataSource } from "apollo-datasource";
 import isEmail from "isemail";
+import { PrismaClient, Trip } from '@prisma/client'
 
 export class UserAPI extends DataSource {
-  prisma;
+  prisma: PrismaClient;
   context: any;
 
   constructor({ prisma }: any) {
@@ -20,21 +21,30 @@ export class UserAPI extends DataSource {
     this.context = config.context;
   }
 
-  async findOrCreateUser(emailInput: { emailArg?: string } = {}) {
+  async findOrCreateUser(emailInput: { email?: string } = {}) {
+    console.log(`findOrCreateUser with `, emailInput)
     const email =
       this.context && this.context.user
         ? this.context.user.email
-        : emailInput.emailArg;
+        : emailInput.email;
+    console.log(email)
     if (!email || !isEmail.validate(email)) return null;
 
-    return null;
+    console.log(`findOrCreateUser`, email)
+    const user = await this.prisma.user.upsert({
+      where: { email },
+      create: { email },
+      update: { email }
+    })
+
+    return user;
   }
 
   async bookTrips({ launchIds }: { launchIds: number[] }) {
     const userId = this.context.user.id;
     if (!userId) return;
 
-    let results = [];
+    let results: Trip[] = [];
 
     // for each launch id, try to book the trip and add it to the results array
     // if successful
@@ -46,8 +56,9 @@ export class UserAPI extends DataSource {
     return results;
   }
 
-  async bookTrip({ launchId }: { launchId: number }): Promise<any> {
+  async bookTrip({ launchId }: { launchId: number }): Promise<Trip | null> {
     const userId = this.context.user.id;
+    return null
   }
 
   async cancelTrip({ launchId }: { launchId: number }) {
