@@ -1,6 +1,6 @@
 import { DataSource } from "apollo-datasource";
 import isEmail from "isemail";
-import { PrismaClient, Trip } from '@prisma/client'
+import { PrismaClient, Trip } from "@prisma/client";
 
 export class UserAPI extends DataSource {
   prisma: PrismaClient;
@@ -22,20 +22,17 @@ export class UserAPI extends DataSource {
   }
 
   async findOrCreateUser(emailInput: { email?: string } = {}) {
-    console.log(`findOrCreateUser with `, emailInput)
     const email =
       this.context && this.context.user
         ? this.context.user.email
         : emailInput.email;
-    console.log(email)
     if (!email || !isEmail.validate(email)) return null;
 
-    console.log(`findOrCreateUser`, email)
     const user = await this.prisma.user.upsert({
       where: { email },
       create: { email },
-      update: { email }
-    })
+      update: { email },
+    });
 
     return user;
   }
@@ -58,22 +55,65 @@ export class UserAPI extends DataSource {
 
   async bookTrip({ launchId }: { launchId: number }): Promise<Trip | null> {
     const userId = this.context.user.id;
-    return null
+    const userBookedTrip = await this.prisma.trip.findUnique({
+      where: {
+        launchId_userId: {
+          launchId: Number(launchId),
+          userId
+        }
+      }
+    })
+
+    if (userBookedTrip) {
+      return null
+    }
+
+    const trip = await this.prisma.trip.create({
+      data: {
+        launchId: Number(launchId),
+        user: {
+          connect: {
+            id: userId
+          }
+        }
+      }
+    })
+    return trip;
   }
 
   async cancelTrip({ launchId }: { launchId: number }) {
     const userId = this.context.user.id;
+    await this.prisma.trip.delete({
+      where: {
+        launchId_userId: {
+          launchId: Number(launchId),
+          userId,
+        },
+      },
+    });
   }
 
   async getLaunchIdsByUser(): Promise<number[]> {
     const userId = this.context.user.id;
-    return [];
+    const trips = await this.prisma.trip.findMany({
+      where: {
+        userId,
+      },
+    });
+    return trips.map((t) => t.launchId || -1).filter((id) => id !== -1);
   }
 
   async isBookedOnLaunch({ launchId }: { launchId: number }): Promise<Boolean> {
     if (!this.context || !this.context.user) return false;
     const userId = this.context.user.id;
-
-    return false;
+    const trip = await this.prisma.trip.findUnique({
+      where: {
+        launchId_userId: {
+          launchId: Number(launchId),
+          userId,
+        }
+      }
+    })
+    return Boolean(trip);
   }
 }

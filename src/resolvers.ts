@@ -3,7 +3,6 @@ import { paginateResults } from "./utils";
 export const resolvers = {
   Query: {
     launches: async (_, { pageSize = 20, after }, { dataSources }) => {
-      console.log(`launches`);
       const allLaunches = await dataSources.launchAPI.getAllLaunches();
       // we want these in reverse chronological order
       allLaunches.reverse();
@@ -29,9 +28,6 @@ export const resolvers = {
   },
   Mutation: {
     login: async (_, { email }, { dataSources }) => {
-      console.log(`TEST login as `, email);
-      console.log(`test`);
-      console.log(`user API`, dataSources.userAPI.findOrCreateUser);
       const user = await dataSources.userAPI.findOrCreateUser({ email });
       if (user) {
         user.token = Buffer.from(email).toString("base64");
@@ -82,8 +78,8 @@ export const resolvers = {
   },
   Launch: {
     isBooked: async (launch, _, { dataSources }) =>
-      // dataSources.userAPI.isBookedOnLaunch({ launchId: launch.id }),
-      false,
+      dataSources.userAPI.isBookedOnLaunch({ launchId: launch.id }),
+      // false,
   },
   User: {
     trips: async (_, __, { dataSources }) => {

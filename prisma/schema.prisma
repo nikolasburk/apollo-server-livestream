@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../store.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Trip {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  launchId  Int?
+  userId    Int?
+  user      User?     @relation(fields: [userId], references: [id])
+
+  @@unique([launchId, userId])
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  email     String?   @unique
+  token     String?
+  trips     Trip[]
+}
