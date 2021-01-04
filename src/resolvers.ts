@@ -82,7 +82,6 @@ export const resolvers = {
   Launch: {
     isBooked: async (launch, _, { dataSources }) =>
       dataSources.userAPI.isBookedOnLaunch({ launchId: launch.id }),
-      // false,
   },
   User: {
     trips: async (_, __, { dataSources }) => {
