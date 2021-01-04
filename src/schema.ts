@@ -20,6 +20,7 @@ type Mutation {
   bookTrips(launchIds: [ID]!): TripUpdateResponse!
   cancelTrip(launchId: ID!): TripUpdateResponse!
   login(email: String): User
+  addPetForUser(name: String!): Pet!
 }
 
 type TripUpdateResponse {
@@ -58,6 +59,13 @@ type User {
   email: String!
   trips: [Launch]!
   token: String
+  pet: Pet
+}
+
+type Pet {
+  id: ID!
+  name: String!
+  owner: User!
 }
 
 type Mission {

@@ -28,4 +28,12 @@ model User {
   email     String?   @unique
   token     String?
   trips     Trip[]
+  pet       Pet?      @relation(fields: [petId], references: [id])
+  petId     Int?      @unique
+}
+
+model Pet {
+  id    Int    @id @default(autoincrement())
+  name  String
+  owner User?
 }

@@ -25,7 +25,7 @@ const server = new ApolloServer({
       where: { email },
       include: { trips: true }
     });
-    return { user };
+    return { user, prisma };
   },
 });
 

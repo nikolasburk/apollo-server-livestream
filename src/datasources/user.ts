@@ -1,6 +1,6 @@
 import { DataSource } from "apollo-datasource";
 import isEmail from "isemail";
-import { PrismaClient, Trip } from "@prisma/client";
+import { PrismaClient, Trip, Pet, prismaVersion } from "@prisma/client";
 
 export class UserAPI extends DataSource {
   prisma: PrismaClient;
@@ -115,5 +115,24 @@ export class UserAPI extends DataSource {
       }
     })
     return Boolean(trip);
+  }
+
+  async addPetForUser(name: string): Promise<Pet> {
+    const userId = this.context.user.id;
+    return this.prisma.pet.create({
+      data: {
+        name,
+        owner: {
+          connect: { id: userId }
+        }
+      }
+    })
+  }
+
+  async gePetForUser(): Promise<Pet | null> {
+    const userId = this.context.user.id;
+    return this.prisma.user.findUnique({
+      where: { id: userId }
+    }).pet()
   }
 }

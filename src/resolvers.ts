@@ -67,6 +67,9 @@ export const resolvers = {
         launches: [launch],
       };
     },
+    addPetForUser: async (_, { name }, { dataSources }) => {
+      return dataSources.userAPI.addPetForUser(name)
+    },
   },
   Mission: {
     // The default size is 'LARGE' if not provided
@@ -93,5 +96,15 @@ export const resolvers = {
         }) || []
       );
     },
+    pet: async (_, __, { dataSources }) => {
+      // get ids of launches by user
+      const pet = await dataSources.userAPI.gePetForUser();
+      return pet;
+    },
   },
+  Pet: {
+    owner: async ({ id }, __, { prisma }) => {
+      return prisma.pet.findUnique({ where: { id } }).owner()
+    }
+  }
 };
