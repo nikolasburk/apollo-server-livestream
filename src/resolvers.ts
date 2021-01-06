@@ -83,27 +83,27 @@ export const resolvers = {
     isBooked: async (launch, _, { dataSources }) =>
       dataSources.userAPI.isBookedOnLaunch({ launchId: launch.id }),
   },
-  User: {
-    trips: async (_, __, { dataSources }) => {
-      // get ids of launches by user
-      const launchIds = await dataSources.userAPI.getLaunchIdsByUser();
-      if (!launchIds.length) return [];
-      // look up those launches by their ids
-      return (
-        dataSources.launchAPI.getLaunchesByIds({
-          launchIds,
-        }) || []
-      );
-    },
-    pet: async (_, __, { dataSources }) => {
-      // get ids of launches by user
-      const pet = await dataSources.userAPI.gePetForUser();
-      return pet;
-    },
+User: {
+  trips: async (_, __, { dataSources }) => {
+    // get ids of launches by user
+    const launchIds = await dataSources.userAPI.getLaunchIdsByUser();
+    if (!launchIds.length) return [];
+    // look up those launches by their ids
+    return (
+      dataSources.launchAPI.getLaunchesByIds({
+        launchIds,
+      }) || []
+    );
   },
-  Pet: {
-    owner: async ({ id }, __, { prisma }) => {
-      return prisma.pet.findUnique({ where: { id } }).owner()
-    }
+  pet: async (_, __, { dataSources }) => {
+    // get ids of launches by user
+    const pet = await dataSources.userAPI.gePetForUser();
+    return pet;
+  },
+},
+Pet: {
+  owner: async ({ id }, __, { prisma }) => {
+    return prisma.pet.findUnique({ where: { id } }).owner()
   }
+}
 };
