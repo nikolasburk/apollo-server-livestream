@@ -1,3 +1,6 @@
+import { UserAPI } from "../src/datasources/user"
+import { LaunchAPI } from "../src/datasources/launch"
+
 export interface Launch {
   id: number
   site?: string
@@ -24,4 +27,9 @@ export interface Mission {
   name?: string
   missionPatchSmall?: string
   missionPatchLarge?: string
+}
+
+export interface DataSources {
+  userAPI: UserAPI
+  launchAPI: LaunchAPI
 }
