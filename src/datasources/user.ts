@@ -50,8 +50,9 @@ export class UserAPI extends DataSource {
     const userId = this.context.user.id;
   }
 
-  async cancelTrip({ launchId }: { launchId: number }) {
+  async cancelTrip({ launchId }: { launchId: number }): Promise<boolean> {
     const userId = this.context.user.id;
+    return false;
   }
 
   async getLaunchIdsByUser(): Promise<number[]> {
